@@ -6,6 +6,7 @@ project(toys)
 add_subdirectory(src)
 add_subdirectory(algo)
 add_subdirectory(data_structure)
+add_subdirectory(logger)
 
 
 
