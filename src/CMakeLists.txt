@@ -1,5 +1,5 @@
 set (CMAKE_CXX_COMPILE "/usr/local/gcc/bin/g++")
-add_compile_options(-std=c++11 -g)
+add_compile_options(-std=c++11 -pthread -g)
 
 
 project(demo)
@@ -13,4 +13,6 @@ target_link_libraries(${PROJECT_NAME}
     sub::data_structurelib
     sub::algolib
     sub::loggerlib
+    sub::pclib
+    pthread
 )

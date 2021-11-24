@@ -4,6 +4,7 @@
 #include "bst.h"
 #include "linklist.h"
 #include "logger.h"
+#include "producer_consumer_pattern.h"
 
 int main() {
     std::cout << "hello, welcome to cpp world\n";
@@ -25,12 +26,14 @@ int main() {
     // BST.delete_node(13);
     // BST.traversal(IN_ORDER);
 
-    utc_timer Timer;
-    std::cout << Timer.utc_fmt << std::endl;
-    sleep(5);
-    int A = Timer.get_curr_time(nullptr);
-    std::cout << Timer.utc_fmt << std::endl;
+    // utc_timer Timer;
+    // std::cout << Timer.utc_fmt << std::endl;
+    // sleep(5);
+    // int A = Timer.get_curr_time(nullptr);
+    // std::cout << Timer.utc_fmt << std::endl;
 
+
+    pc::test();
 
 
     return 0;
