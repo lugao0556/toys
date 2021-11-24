@@ -146,13 +146,24 @@ private:
 
 class logger {
 
+public:
+    // for thread-safe singleton
+    static logger* ins() {
+        pthread_once(&_once, logger::init);
+        return _ins;
+    }
+
+    static void init() {
+        while (!_ins) _ins = new logger();
+    }
+
 private:
     logger();
     logger(const logger&);
     logger& operator=(const logger&);
 
     static logger* _ins;
-    //static pthread_once_t _once;
+    static pthread_once_t _once;
 
 };
 
