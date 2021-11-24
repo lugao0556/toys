@@ -152,7 +152,7 @@ private:
     logger& operator=(const logger&);
 
     static logger* _ins;
-    static pthread_once_t _once;
+    //static pthread_once_t _once;
 
 };
 
