@@ -12,6 +12,20 @@
 #include <sys/time.h>
 #include <sys/types.h>//getpid, gettid
 
+enum LOG_LEVEL {
+    FATAL = 1,
+    ERROR,
+    WARN,
+    INFO,
+    DEBUG,
+    TRACE,
+};
+
+#define MAX_LOG_DIR_LEN 512
+#define MAX_APP_NAME_LEN 128
+
+extern pid_t gettid();
+
 struct utc_timer
 {  
     // public data exported to user
@@ -157,6 +171,10 @@ public:
         while (!_ins) _ins = new logger();
     }
 
+    void init_app(const char* log_dir, const char* app_name, int level);
+
+    void persist();
+
 private:
     logger();
     logger(const logger&);
@@ -165,6 +183,30 @@ private:
     static logger* _ins;
     static pthread_once_t _once;
 
+    static pthread_cond_t _cond;
+    static pthread_mutex_t _mutex;
+    static uint32_t _buff_size;
+
+    char _app_name[MAX_APP_NAME_LEN];
+    char _log_dir[MAX_LOG_DIR_LEN];
+
+    bool _env_ok;
+    uint8_t _level;
+    uint32_t _buff_num;
+    int _year, _mon, _day, _log_size;
+
+    buffer_node* _curr_buf; // producer throw log into this buffer
+    buffer_node* _persist_buf; // consumer retrieve log from this buffer to persist
+
+    FILE* _fp;
+    pid_t _pid;
+
+    utc_timer* _timer;
+
+    // internal function
+    void create_double_linked_ring();
 };
+
+void* do_by_thread(void* args);
 
 #endif
