@@ -1,7 +1,3 @@
-set (CMAKE_CXX_COMPILE "/usr/local/gcc/bin/g++")
-add_compile_options(-std=c++11 -pthread -g)
-
-
 project(demo)
 
 add_executable(${PROJECT_NAME} main.cpp)

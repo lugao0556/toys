@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.7)
 
+set (CMAKE_CXX_COMPILE "/usr/local/gcc/bin/g++")
+add_compile_options(-std=c++11 -pthread -g)
+
+
 project(toys)
 
 # Add sub directories

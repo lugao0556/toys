@@ -14,7 +14,7 @@ namespace pc {
 
 void* consumer(void* arg) {
     int* num = (int*)arg;
-    /*while (1)*/ {
+    while (1) {
         // lock
         pthread_mutex_lock(&g_mutex);
 
@@ -25,6 +25,7 @@ void* consumer(void* arg) {
 
         std::cout << "consumer " << *num << " end wait a condition...\n";
         std::cout << "consumer " << *num << " begin consume product...\n";
+
 
         shared_var--;
 
@@ -39,7 +40,7 @@ void* consumer(void* arg) {
 void* producer(void* arg) {
     int* num = (int*)arg;
 
-    /*while (1)*/ {
+    while (1) {
 
         pthread_mutex_lock(&g_mutex);
 
@@ -63,15 +64,17 @@ void test() {
     pthread_mutex_init(&g_mutex, nullptr);
     pthread_cond_init(&g_cond, nullptr);
 
+    int pthread_index[] = {1,2,3};
+
     for (int i = 0; i < CONSUMERS_CNT; i++) {
-        pthread_create(&g_thread[i], nullptr, consumer, (void*)&i);
+        pthread_create(&g_thread[i], nullptr, consumer, (void*)&pthread_index[i]);
         sleep(1);
     }
 
     sleep(2);
 
     for (int i = CONSUMERS_CNT; i < (PRODUCERS_CNT + CONSUMERS_CNT); i++) {
-        pthread_create(&g_thread[i], nullptr, producer, (void*)&i);
+        pthread_create(&g_thread[i], nullptr, producer, (void*)&pthread_index[i]);
         sleep(1);
     }
 
