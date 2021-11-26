@@ -171,9 +171,13 @@ public:
         while (!_ins) _ins = new logger();
     }
 
+     int get_level() const { return _level;}
+
     void init_app(const char* log_dir, const char* app_name, int level);
 
     void persist();
+
+    void try_append(const char* lvl, const char* format, ...);
 
 private:
     logger();
@@ -193,7 +197,7 @@ private:
     bool _env_ok;
     uint8_t _level;
     uint32_t _buff_num;
-    int _year, _mon, _day, _log_size;
+    int _year, _mon, _day, _log_cnt;
 
     buffer_node* _curr_buf; // producer throw log into this buffer
     buffer_node* _persist_buf; // consumer retrieve log from this buffer to persist
@@ -201,12 +205,174 @@ private:
     FILE* _fp;
     pid_t _pid;
 
+     uint64_t _lst_lts;//last can't log error time(s) if value != 0, log error happened last time
+
     utc_timer* _timer;
 
     // internal function
     void create_double_linked_ring();
+    bool decis_file(int year, int mon, int day);
 };
 
-void* do_by_thread(void* args);
+void* do_thread_routine(void* args);
+
+
+#define LOG_MEM_SET(mem_lmt) \
+    do \
+    { \
+        if (mem_lmt < 90 * 1024 * 1024) \
+        { \
+            mem_lmt = 90 * 1024 * 1024; \
+        } \
+        else if (mem_lmt > 1024 * 1024 * 1024) \
+        { \
+            mem_lmt = 1024 * 1024 * 1024; \
+        } \
+        logger::_buff_size = mem_lmt; \
+    } while (0)
+
+#define LOG_INIT(log_dir, app_name, level) \
+    do \
+    { \
+        logger::ins()->init_app(log_dir, app_name, level); \
+        pthread_t tid; \
+        pthread_create(&tid, NULL, do_thread_routine, NULL); \
+        pthread_detach(tid); \
+    } while (0)
+
+//format: [LEVEL][yy-mm-dd h:m:s.ms][tid]file_name:line_no(func_name):content
+#define LOG_TRACE(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= TRACE) \
+        { \
+            logger::ins()->try_append("[TRACE]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_DEBUG(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= DEBUG) \
+        { \
+            logger::ins()->try_append("[DEBUG]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_INFO(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= INFO) \
+        { \
+            logger::ins()->try_append("[INFO]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_NORMAL(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= INFO) \
+        { \
+            logger::ins()->try_append("[INFO]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_WARN(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= WARN) \
+        { \
+            logger::ins()->try_append("[WARN]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_ERROR(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= ERROR) \
+        { \
+            logger::ins()->try_append("[ERROR]", "[%u]%s:%d(%s): " fmt "\n", \
+                gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define LOG_FATAL(fmt, args...) \
+    do \
+    { \
+        logger::ins()->try_append("[FATAL]", "[%u]%s:%d(%s): " fmt "\n", \
+            gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+    } while (0)
+
+#define TRACE(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= TRACE) \
+        { \
+            logger::ins()->try_append("[TRACE]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define DEBUG(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= DEBUG) \
+        { \
+            logger::ins()->try_append("[DEBUG]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define INFO(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= INFO) \
+        { \
+            logger::ins()->try_append("[INFO]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define NORMAL(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= INFO) \
+        { \
+            logger::ins()->try_append("[INFO]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define WARN(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= WARN) \
+        { \
+            logger::ins()->try_append("[WARN]", "[%u]%s:%d(%s): " fmt "\n", \
+                    gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define ERROR(fmt, args...) \
+    do \
+    { \
+        if (logger::ins()->get_level() >= ERROR) \
+        { \
+            logger::ins()->try_append("[ERROR]", "[%u]%s:%d(%s): " fmt "\n", \
+                gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+        } \
+    } while (0)
+
+#define FATAL(fmt, args...) \
+    do \
+    { \
+        logger::ins()->try_append("[FATAL]", "[%u]%s:%d(%s): " fmt "\n", \
+            gettid(), __FILE__, __LINE__, __FUNCTION__, ##args); \
+    } while (0)
 
 #endif

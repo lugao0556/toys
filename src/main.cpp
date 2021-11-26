@@ -4,6 +4,7 @@
 #include "bst.h"
 #include "linklist.h"
 #include "logger.h"
+#include "logger_test.h"
 #include "producer_consumer_pattern.h"
 
 int main() {
@@ -33,7 +34,9 @@ int main() {
     // std::cout << Timer.utc_fmt << std::endl;
 
 
-    pc::test();
+    //pc::test();
+
+    logger_test::test();
 
     return 0;
 

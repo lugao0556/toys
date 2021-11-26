@@ -2,7 +2,7 @@
 project (logger)
 
 # Add a library with the above sources
-add_library(${PROJECT_NAME} src/logger.cpp)
+add_library(${PROJECT_NAME} src/logger.cpp src/logger_test.cpp)
 add_library(sub::loggerlib ALIAS ${PROJECT_NAME})
 
 
