@@ -2,5 +2,6 @@
 #define ALGO_H_
 
 #include "sort.h"
+#include "utils.h"
 
 #endif

@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "sort.h"
+#include "utils.h"
 
 namespace algorithm {
 // qick sort
@@ -90,6 +91,41 @@ void msort(std::vector<int>& data) {
     data = tmp;
 }
 
+
+
+// heap sort
+void create_max_heap(std::vector<int>& data, int r) {
+    for (int i = (r-1)/2; i >= 0; i--) {
+        int lchild_index = 2*i + 1;
+        int rchild_index = 2*i + 2;
+        int parent = i;
+        while (lchild_index <= r) {
+            int child = lchild_index;
+            if (rchild_index <= r && data[rchild_index] > data[lchild_index]) {
+                child = rchild_index;
+            } 
+
+            if (data[parent] < data[child]) {
+                swap(data, parent, child);
+            }
+
+            parent = child;
+            lchild_index = 2*parent + 1;
+            rchild_index = 2*parent + 2;
+
+        }
+    }
+}
+
+void hsort(std::vector<int>& data) {
+    // the left child of data[i] is data[2i+1]
+    // the right child of data[i] is data[2i+2]
+    int len = data.size();
+    for (int i = len - 1; i >= 0; i--) {
+        create_max_heap(data, i);
+        swap(data, 0, i);
+    }
+} 
 
 
 } // end namespace
