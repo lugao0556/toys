@@ -49,7 +49,7 @@ int main() {
     // return 0;
 
     //std::vector<int> data = {6,4,2,8, 9, 10, 3,5,1,7};
-    std::vector<int> data = {6,4,2,8, 9, 10, 3,5,1,7};
+    //std::vector<int> data = {6,4,2,8, 9, 10, 3,5,1,7};
     // algorithm::msort(data);
     // // algorithm::copy(0, 0, 1, data, tmp);
     // // algorithm::copy(2, 2, 3, data, tmp);
@@ -67,11 +67,11 @@ int main() {
     //algorithm::create_max_heap(data, 9);
     //algorithm::swap(data, 0, 9);
 
-    algorithm::hsort(data);
+    // algorithm::hsort(data);
     
-    for (int i = 0; i < data.size(); i++) {
-        std::cout << data[i] << " ";
-    }
-    std::cout << std::endl;
+    // for (int i = 0; i < data.size(); i++) {
+    //     std::cout << data[i] << " ";
+    // }
+    // std::cout << std::endl;
 
 }
