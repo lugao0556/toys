@@ -10,5 +10,6 @@ target_link_libraries(${PROJECT_NAME}
     sub::algolib
     sub::loggerlib
     sub::pclib
+    sub::ejsonlib
     pthread
 )

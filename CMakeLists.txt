@@ -12,6 +12,7 @@ add_subdirectory(algo)
 add_subdirectory(data_structure)
 add_subdirectory(logger)
 add_subdirectory(design_patterns)
+add_subdirectory(ejson)
 
 
 
