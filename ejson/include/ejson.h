@@ -3,7 +3,7 @@
 
 #include <string>
 
-
+namespace JsonParser {
 
 enum JsonType {
     E_NULL,
@@ -26,9 +26,12 @@ struct JsonValue
 {
     JsonType type;
 
-    int parse(JsonValue& jv, const std::string& json);
-    JsonType get_type(JsonValue& jv) {return jv.type;}
 };
+
+extern int      parse(JsonValue& jv, const std::string& json);
+extern JsonType get_type(const JsonValue& jv);
+
+}
 
 
 #endif
