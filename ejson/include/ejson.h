@@ -28,6 +28,8 @@ struct JsonValue
     JsonType type;
     double num_value;
 
+    JsonValue() : type(E_NULL) {}
+
 };
 
 extern int      parse(JsonValue& jv, const std::string& json);
