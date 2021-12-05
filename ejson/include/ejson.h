@@ -19,17 +19,21 @@ enum ErrorCode {
     PARSE_OK,
     PARSE_EXPECT,
     PARSE_UNEXPECT,
+    PARSE_INVALID,
     PARSE_SINGUAR,
 };
 
 struct JsonValue
 {
     JsonType type;
+    double num_value;
 
 };
 
 extern int      parse(JsonValue& jv, const std::string& json);
+
 extern JsonType get_type(const JsonValue& jv);
+extern double get_num_value(const JsonValue& jv);
 
 }
 
